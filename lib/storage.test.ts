@@ -23,4 +23,10 @@ describe('participant storage', () => {
     clearParticipantIdentity('abc123');
     expect(getParticipantIdentity('ABC123')).toBeNull();
   });
+
+  it('returns null when local storage contains invalid participant data', () => {
+    window.localStorage.setItem(getStorageKey('abc123'), '{invalid-json');
+
+    expect(getParticipantIdentity('abc123')).toBeNull();
+  });
 });
