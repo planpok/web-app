@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -26,6 +27,13 @@ function formatInsightValue(value: number | null): string {
 export function SessionPage({ code }: SessionPageProps) {
   const router = useRouter();
   const sessionCode = code.toUpperCase();
+  const sessionShareUrl = useMemo(() => {
+    if (typeof window === 'undefined') {
+      return `/session/${sessionCode}`;
+    }
+
+    return `${window.location.origin}/session/${sessionCode}`;
+  }, [sessionCode]);
   const [identity, setIdentity] = useState<StoredParticipantIdentity | null>(null);
   const [session, setSession] = useState<SessionView | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -188,7 +196,7 @@ export function SessionPage({ code }: SessionPageProps) {
             <h1 className="session-code-title">{sessionCode}</h1>
             <button
               className="secondary-button compact-button"
-              onClick={() => navigator.clipboard.writeText(sessionCode)}
+              onClick={() => navigator.clipboard.writeText(sessionShareUrl)}
               type="button"
             >
               Copier
