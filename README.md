@@ -1,12 +1,12 @@
 # Poker Planning - Frontend
 
-Application frontend Next.js pour Poker Planning.
+Next.js frontend application for Poker Planning.
 
-## Prerequis
+## Prerequisites
 
-- Node.js 22.x recommande
+- Recommended Node.js 22.x
 - npm 10+
-- Backend Poker Planning accessible (API HTTP + Socket.IO)
+- Reachable Poker Planning backend (HTTP API + Socket.IO)
 
 ## Installation
 
@@ -16,39 +16,39 @@ npm ci
 
 ## Configuration
 
-Le frontend consomme l'API backend via la variable d'environnement suivante:
+The frontend consumes the backend API through this environment variable:
 
-- `NEXT_PUBLIC_API_BASE_URL`: URL de base de l'API (ex: `http://localhost:3000/api`)
+- `NEXT_PUBLIC_API_BASE_URL`: API base URL (example: `http://localhost:3000/api`)
 
-Exemple avec un fichier `.env.local`:
+Example with a `.env.local` file:
 
 ```bash
 NEXT_PUBLIC_API_BASE_URL=http://localhost:3000/api
 ```
 
-Comportement par defaut:
+Default behavior:
 
-- si `NEXT_PUBLIC_API_BASE_URL` est definie: cette valeur est utilisee
-- sinon en navigateur: `<protocole>//<hostname>:3000/api`
-- sinon cote serveur: `http://localhost:3000/api`
+- if `NEXT_PUBLIC_API_BASE_URL` is defined: this value is used
+- otherwise in the browser: `<protocol>//<hostname>:3000/api`
+- otherwise on the server: `http://localhost:3000/api`
 
-## Lancement
+## Run
 
-Mode developpement:
+Development mode:
 
 ```bash
 npm run dev
 ```
 
-Application disponible par defaut sur `http://localhost:3000`.
+The app is available by default at `http://localhost:3000`.
 
-Build de production:
+Production build:
 
 ```bash
 npm run build
 ```
 
-Execution du build:
+Run the production build:
 
 ```bash
 npm run start
@@ -56,30 +56,30 @@ npm run start
 
 ## Tests
 
-Lancer toute la suite de tests (Vitest):
+Run the full test suite (Vitest):
 
 ```bash
 npm run test
 ```
 
-## Commandes utiles
+## Useful Commands
 
-- `npm run dev`: lance Next.js en developpement
-- `npm run build`: genere le build de production
-- `npm run start`: demarre l'application en mode production
-- `npm run test`: execute les tests unitaires/e2e Vitest
+- `npm run dev`: start Next.js in development mode
+- `npm run build`: build for production
+- `npm run start`: start the app in production mode
+- `npm run test`: run unit/e2e Vitest tests
 
 ## Docker
 
-Build de l'image:
+Build the image:
 
 ```bash
 docker build -t pokerplanning-web-app .
 ```
 
-Le Dockerfile expose le port `3001` et lance l'app en production sur `0.0.0.0:3001`.
+The Dockerfile exposes port `3001` and runs the app in production on `0.0.0.0:3001`.
 
-Pour surcharger l'URL backend au build:
+To override the backend URL at build time:
 
 ```bash
 docker build \
