@@ -10,6 +10,7 @@ import {
   getParticipantIdentity,
   type StoredParticipantIdentity
 } from '@/lib/storage';
+import { buildGroupVoteStats, deriveSessionGroups, resolveParticipantGroupId } from '@/lib/session-groups';
 import { connectToSession } from '@/lib/socket';
 import type { SessionView } from '@/lib/types';
 import { buildVoteStats } from '@/lib/vote-stats';
@@ -170,6 +171,46 @@ export function SessionPage({ code }: SessionPageProps) {
     return buildVoteStats(session.participants, session.deck);
   }, [session]);
 
+  const sessionGroups = useMemo(() => {
+    if (!session) {
+      return [];
+    }
+
+    return deriveSessionGroups(session);
+  }, [session]);
+
+  const groupedVoteStats = useMemo(() => {
+    if (!session?.revealed) {
+      return [];
+    }
+
+    return buildGroupVoteStats(session);
+  }, [session]);
+
+  const participantGroupNameById = useMemo(() => {
+    if (!session) {
+      return new Map<string, string>();
+    }
+
+    const nameByParticipantId = new Map<string, string>();
+
+    session.participants.forEach((participant) => {
+      const groupId = resolveParticipantGroupId(participant, sessionGroups);
+
+      if (!groupId) {
+        return;
+      }
+
+      const group = sessionGroups.find((sessionGroup) => sessionGroup.id === groupId);
+
+      if (group) {
+        nameByParticipantId.set(participant.id, group.name);
+      }
+    });
+
+    return nameByParticipantId;
+  }, [session, sessionGroups]);
+
   const runAction = async (actionName: string, callback: () => Promise<unknown>) => {
     setPendingAction(actionName);
     setErrorMessage(null);
@@ -249,6 +290,9 @@ export function SessionPage({ code }: SessionPageProps) {
                 <span className="muted-text">
                   {participant.id === identity.participantId ? 'Vous' : 'Participant'}
                 </span>
+                {participantGroupNameById.has(participant.id) ? (
+                  <span className="participant-group">{participantGroupNameById.get(participant.id)}</span>
+                ) : null}
               </div>
             </div>
 
@@ -368,6 +412,69 @@ export function SessionPage({ code }: SessionPageProps) {
             ) : null}
           </div>
         </section>
+
+        {groupedVoteStats.length > 0 ? (
+          <section className="card grouped-results-panel">
+            <div className="section-heading compact-heading">
+              <div>
+                <span className="eyebrow">Groupes</span>
+                <h2>Tendances par groupe</h2>
+              </div>
+              <p className="muted-text">
+                Les statistiques sont ventilées par groupe pour comparer les dynamiques iOS/Android
+                ou tout autre découpage de l’équipe.
+              </p>
+            </div>
+
+            <div className="grouped-results-grid">
+              {groupedVoteStats.map((groupStats) => (
+                <article className="group-result-card" key={groupStats.group.id}>
+                  <header className="group-result-header">
+                    <h3>{groupStats.group.name}</h3>
+                    <span className="muted-text">
+                      {groupStats.votedCount}/{groupStats.participants.length} votes
+                    </span>
+                  </header>
+
+                  <div className="group-result-insights">
+                    <div className="insight-stat-card">
+                      <span className="insight-label">Consensus</span>
+                      <strong>{groupStats.stats.consensusLabel}</strong>
+                    </div>
+                    <div className="insight-stat-card">
+                      <span className="insight-label">Moyenne</span>
+                      <strong>{formatInsightValue(groupStats.stats.average)}</strong>
+                    </div>
+                  </div>
+
+                  <div className="vote-chart">
+                    {groupStats.stats.buckets
+                      .filter((bucket) => bucket.count > 0)
+                      .map((bucket) => (
+                        <article className="vote-chart-row" key={`${groupStats.group.id}:${bucket.label}`}>
+                          <div className="vote-chart-meta">
+                            <span className="vote-chart-label">{bucket.label}</span>
+                            <span className="vote-chart-count">{bucket.count}</span>
+                          </div>
+                          <div className="vote-chart-track" role="presentation">
+                            <div
+                              className="vote-chart-bar"
+                              style={{
+                                width: `${Math.max(
+                                  bucket.ratio * 100,
+                                  bucket.count > 0 ? 8 : 0
+                                )}%`
+                              }}
+                            />
+                          </div>
+                        </article>
+                      ))}
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        ) : null}
 
         {participantsPanel}
 

@@ -4,6 +4,14 @@ export type ParticipantView = {
   isOwner: boolean;
   hasVoted: boolean;
   vote: string | null;
+  groupId?: string | null;
+  groupName?: string | null;
+  group?: SessionGroupView | null;
+};
+
+export type SessionGroupView = {
+  id: string;
+  name: string;
 };
 
 export type SessionView = {
@@ -11,6 +19,7 @@ export type SessionView = {
   revealed: boolean;
   deck: string[];
   createdAt: string;
+  groups?: SessionGroupView[];
   participants: ParticipantView[];
 };
 
@@ -25,11 +34,16 @@ export type LeaveSessionResponse = {
 
 export type JoinOrCreatePayload = {
   name: string;
+  groupId?: string;
+  groupName?: string;
 };
 
 export type CreateSessionPayload = {
   name: string;
   deck: string[];
+  groups?: string[];
+  ownerGroupId?: string;
+  ownerGroupName?: string;
 };
 
 export type VotePayload = {
