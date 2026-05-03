@@ -43,6 +43,51 @@ textarea {
   padding: 32px 0 48px;
 }
 
+.seo-section {
+  display: grid;
+  gap: 24px;
+  padding: 48px 0 8px;
+}
+
+.seo-heading {
+  display: grid;
+  gap: 12px;
+  max-width: 760px;
+}
+
+.seo-heading h2 {
+  margin: 0;
+  font-size: clamp(1.9rem, 3vw, 3rem);
+  line-height: 1;
+}
+
+.seo-heading p,
+.seo-grid p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.seo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.seo-grid article {
+  display: grid;
+  gap: 10px;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: rgba(255, 250, 240, 0.64);
+}
+
+.seo-grid h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
 .hero-card,
 .card {
   border: 1px solid var(--line);
@@ -871,7 +916,8 @@ textarea {
   .hero-card,
   .session-support-grid,
   .result-hero-grid,
-  .consensus-grid {
+  .consensus-grid,
+  .seo-grid {
     grid-template-columns: 1fr;
   }
 

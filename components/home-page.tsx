@@ -350,6 +350,42 @@ export function HomePage({ initialCode = '' }: HomePageProps) {
           {errorMessage ? <p className="error-banner">{errorMessage}</p> : null}
         </div>
       </section>
+
+      <section className="seo-section" aria-labelledby="planning-poker-title">
+        <div className="seo-heading">
+          <span className="eyebrow">Estimation agile</span>
+          <h2 id="planning-poker-title">Un planning poker en ligne simple pour les equipes Scrum.</h2>
+          <p>
+            Planning-poker.fr aide les product owners, scrum masters et equipes de
+            developpement a estimer les user stories avec des votes anonymes jusqu&apos;a
+            la revelation.
+          </p>
+        </div>
+
+        <div className="seo-grid">
+          <article>
+            <h3>Sessions instantanees</h3>
+            <p>
+              Creez une salle de planning poker, partagez un code court et laissez
+              chaque participant rejoindre la session depuis son navigateur.
+            </p>
+          </article>
+          <article>
+            <h3>Votes sans influence</h3>
+            <p>
+              Les estimations restent masquees pendant le vote pour limiter les biais,
+              puis l&apos;equipe revele les cartes au meme moment.
+            </p>
+          </article>
+          <article>
+            <h3>Decks adaptes a votre methode</h3>
+            <p>
+              Utilisez une suite Fibonacci, des tailles de t-shirt ou un deck
+              personnalise pour aligner l&apos;outil avec votre pratique agile.
+            </p>
+          </article>
+        </div>
+      </section>
     </main>
   );
 }
