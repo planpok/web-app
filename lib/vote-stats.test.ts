@@ -1,4 +1,10 @@
 import { buildVoteStats, parseNumericVote } from '@/lib/vote-stats';
+import {
+  formatNonNumericVotesExcludedMessage,
+  formatNumericVoteCount,
+  formatParticipantLabel,
+  formatVoteCount
+} from '@/lib/pluralize';
 
 describe('vote stats helpers', () => {
   it('parses only numeric votes', () => {
@@ -38,7 +44,9 @@ describe('vote stats helpers', () => {
     expect(stats.standardDeviation).toBe(0.94);
     expect(stats.consensusLabel).toBe('Forte divergence');
     expect(stats.dispersionLabel).toBe('Dispersion moderee');
-    expect(stats.nonNumericVotesMessage).toContain('1 vote(s) non numerique(s)');
+    expect(stats.nonNumericVotesMessage).toBe(
+      "1 vote non numerique est exclu des stats de moyenne et d'ecart."
+    );
   });
 
   it('returns null numerical stats when the deck has no numeric votes', () => {
@@ -52,7 +60,26 @@ describe('vote stats helpers', () => {
     expect(stats.spread).toBeNull();
     expect(stats.standardDeviation).toBeNull();
     expect(stats.dispersionLabel).toBe('Dispersion non numerique');
-    expect(stats.nonNumericVotesMessage).toContain('1 vote(s) non numerique(s)');
+    expect(stats.nonNumericVotesMessage).toBe(
+      "1 vote non numerique est exclu des stats de moyenne et d'ecart."
+    );
+  });
+
+  it('formats vote count labels with singular and plural forms', () => {
+    expect(formatVoteCount(0)).toBe('0 vote');
+    expect(formatVoteCount(1)).toBe('1 vote');
+    expect(formatVoteCount(2)).toBe('2 votes');
+    expect(formatNumericVoteCount(1)).toBe('1 vote numerique');
+    expect(formatNumericVoteCount(3)).toBe('3 votes numeriques');
+    expect(formatNonNumericVotesExcludedMessage(2)).toBe(
+      "2 votes non numeriques sont exclus des stats de moyenne et d'ecart."
+    );
+  });
+
+  it('formats participant labels with singular and plural forms', () => {
+    expect(formatParticipantLabel(0)).toBe('Participant');
+    expect(formatParticipantLabel(1)).toBe('Participant');
+    expect(formatParticipantLabel(2)).toBe('Participants');
   });
 
   it('flags a strong divergence when votes are spread out', () => {

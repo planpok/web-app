@@ -1,4 +1,5 @@
 import type { ParticipantView } from '@/lib/types';
+import { formatNonNumericVotesExcludedMessage } from '@/lib/pluralize';
 
 export type VoteBucket = {
   label: string;
@@ -146,9 +147,7 @@ export function buildVoteStats(participants: ParticipantView[], deck: string[]):
       standardDeviation: null,
       ...insightCopy,
       nonNumericVotesMessage:
-        nonNumericVoteCount > 0
-          ? `${nonNumericVoteCount} vote(s) non numerique(s) sont exclus des stats de moyenne et d’ecart.`
-          : null
+        nonNumericVoteCount > 0 ? formatNonNumericVotesExcludedMessage(nonNumericVoteCount) : null
     };
   }
 
@@ -185,8 +184,6 @@ export function buildVoteStats(participants: ParticipantView[], deck: string[]):
     standardDeviation: roundedStandardDeviation,
     ...insightCopy,
     nonNumericVotesMessage:
-      nonNumericVoteCount > 0
-        ? `${nonNumericVoteCount} vote(s) non numerique(s) sont exclus des stats de moyenne et d’ecart.`
-        : null
+      nonNumericVoteCount > 0 ? formatNonNumericVotesExcludedMessage(nonNumericVoteCount) : null
   };
 }

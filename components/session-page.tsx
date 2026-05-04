@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
 import { getSession, leaveSession, resetSession, revealSession, submitVote } from '@/lib/api';
+import { formatNumericVoteCount, formatParticipantLabel, formatVoteCount } from '@/lib/pluralize';
 import {
   clearParticipantIdentity,
   getParticipantIdentity,
@@ -23,6 +24,14 @@ type SessionPageProps = {
 
 function formatInsightValue(value: number | null): string {
   return value === null ? '—' : `${value}`;
+}
+
+function formatVotedParticipantCount(votedCount: number, participantCount: number): string {
+  return `${votedCount}/${participantCount} ${participantCount > 1 ? 'votes' : 'vote'}`;
+}
+
+function formatPlacedVotesLabel(count: number): string {
+  return count > 1 ? 'Votes poses' : 'Vote pose';
 }
 
 export function SessionPage({ code }: SessionPageProps) {
@@ -160,7 +169,7 @@ export function SessionPage({ code }: SessionPageProps) {
       return 'Chargement...';
     }
 
-    return `${votedCount}/${session.participants.length} votes`;
+    return formatVotedParticipantCount(votedCount, session.participants.length);
   }, [session, votedCount]);
 
   const revealedVoteStats = useMemo(() => {
@@ -340,7 +349,7 @@ export function SessionPage({ code }: SessionPageProps) {
               <p className="muted-text">
                 {revealedVoteStats.average === null
                   ? 'Aucune moyenne numerique disponible.'
-                  : `Calculee sur ${revealedVoteStats.numericVoteCount} vote(s) numerique(s).`}
+                  : `Calculee sur ${formatNumericVoteCount(revealedVoteStats.numericVoteCount)}.`}
               </p>
             </article>
 
@@ -365,7 +374,7 @@ export function SessionPage({ code }: SessionPageProps) {
               <article className="vote-chart-row" key={bucket.label}>
                 <div className="vote-chart-meta">
                   <span className="vote-chart-label">{bucket.label}</span>
-                  <span className="vote-chart-count">{bucket.count} vote(s)</span>
+                  <span className="vote-chart-count">{formatVoteCount(bucket.count)}</span>
                 </div>
                 <div className="vote-chart-track" role="presentation">
                   <div
@@ -432,7 +441,10 @@ export function SessionPage({ code }: SessionPageProps) {
                   <header className="group-result-header">
                     <h3>{groupStats.group.name}</h3>
                     <span className="muted-text">
-                      {groupStats.votedCount}/{groupStats.participants.length} votes
+                      {formatVotedParticipantCount(
+                        groupStats.votedCount,
+                        groupStats.participants.length
+                      )}
                     </span>
                   </header>
 
@@ -525,11 +537,13 @@ export function SessionPage({ code }: SessionPageProps) {
             <div className="session-stats compact-session-stats">
               <div className="session-stat">
                 <span className="session-stat-value">{session.participants.length}</span>
-                <span className="session-stat-label">Participants</span>
+                <span className="session-stat-label">
+                  {formatParticipantLabel(session.participants.length)}
+                </span>
               </div>
               <div className="session-stat accent">
                 <span className="session-stat-value">{votedCount}</span>
-                <span className="session-stat-label">Votes poses</span>
+                <span className="session-stat-label">{formatPlacedVotesLabel(votedCount)}</span>
               </div>
             </div>
           </div>
@@ -601,11 +615,13 @@ export function SessionPage({ code }: SessionPageProps) {
           <div className="session-stats compact-session-stats">
             <div className="session-stat">
               <span className="session-stat-value">{session.participants.length}</span>
-              <span className="session-stat-label">Participants</span>
+              <span className="session-stat-label">
+                {formatParticipantLabel(session.participants.length)}
+              </span>
             </div>
             <div className="session-stat accent">
               <span className="session-stat-value">{votedCount}</span>
-              <span className="session-stat-label">Votes poses</span>
+              <span className="session-stat-label">{formatPlacedVotesLabel(votedCount)}</span>
             </div>
           </div>
 
