@@ -1,33 +1,30 @@
-FROM node:22-alpine AS deps
+FROM node:22-bookworm-slim AS deps
 WORKDIR /app
 
 COPY package*.json ./
 RUN npm ci
 
-FROM node:22-alpine AS build
+FROM node:22-bookworm-slim AS build
 WORKDIR /app
 ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:3000/api
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
+ENV NEXT_TELEMETRY_DISABLED=1
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run build
 
-FROM node:22-alpine AS runtime
+FROM gcr.io/distroless/nodejs22-debian12:nonroot AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV HOSTNAME=0.0.0.0
+ENV PORT=3001
 
-COPY package*.json ./
-RUN npm ci --omit=dev
-
-COPY --from=build /app/.next ./.next
-COPY --from=build /app/app ./app
-COPY --from=build /app/components ./components
-COPY --from=build /app/lib ./lib
-COPY --from=build /app/next.config.ts ./next.config.ts
-COPY --from=build /app/tsconfig.json ./tsconfig.json
-COPY --from=build /app/next-env.d.ts ./next-env.d.ts
+COPY --chown=nonroot:nonroot --from=build /app/.next/standalone ./
+COPY --chown=nonroot:nonroot --from=build /app/.next/static ./.next/static
+COPY --chown=nonroot:nonroot --from=build /app/app ./app
 
 EXPOSE 3001
 
-CMD ["npm", "run", "start", "--", "-H", "0.0.0.0", "-p", "3001"]
+CMD ["server.js"]
