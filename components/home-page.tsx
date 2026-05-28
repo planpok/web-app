@@ -64,16 +64,27 @@ export function HomePage({ initialCode = '' }: HomePageProps) {
     setCreateOwnerGroupName((previous) => (previous === name ? '' : previous));
   };
 
+  const getCreateGroupsForSubmit = () => {
+    const pendingGroup = createGroupInput.trim().replace(/\s+/g, ' ');
+
+    if (!pendingGroup || createGroups.includes(pendingGroup)) {
+      return createGroups;
+    }
+
+    return [...createGroups, pendingGroup];
+  };
+
   const submitCreate = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setPendingAction('create');
     setErrorMessage(null);
+    const groups = getCreateGroupsForSubmit();
 
     try {
       const response = await createSession({
         name: createName,
         deck: [...availableDeck],
-        groups: createGroups.length > 0 ? createGroups : undefined,
+        groups: groups.length > 0 ? groups : undefined,
         ownerGroupName: createOwnerGroupName || undefined
       });
 

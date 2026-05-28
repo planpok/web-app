@@ -140,4 +140,46 @@ describe('HomePage flow', () => {
     });
     expect(routerMock.push).toHaveBeenCalledWith('/session/abc123');
   });
+
+  it('creates a session with the group typed in the group field', async () => {
+    createSessionMock.mockResolvedValue({
+      participantId: 'participant_123',
+      session: {
+        code: 'abc123',
+        revealed: false,
+        deck: ['1', '2', '3', '5', '8', '13', '21', '?'],
+        createdAt: new Date().toISOString(),
+        groups: [{ id: 'ios', name: 'iOS' }],
+        participants: [
+          {
+            id: 'participant_123',
+            name: 'Maxime',
+            isOwner: true,
+            hasVoted: false,
+            vote: null
+          }
+        ]
+      }
+    });
+
+    await renderHomePage();
+
+    const nameInput = container.querySelector('input[placeholder="Maxime"]') as HTMLInputElement;
+    const groupInput = container.querySelector('input[placeholder="iOS"]') as HTMLInputElement;
+    const submitButton = getButton('Demarrer la session');
+
+    await setInputValue(nameInput, 'Maxime');
+    await setInputValue(groupInput, 'iOS');
+
+    await act(async () => {
+      submitButton.click();
+    });
+
+    expect(createSessionMock).toHaveBeenCalledWith({
+      name: 'Maxime',
+      deck: ['1', '2', '3', '5', '8', '13', '21', '?'],
+      groups: ['iOS'],
+      ownerGroupName: undefined
+    });
+  });
 });
