@@ -3,7 +3,12 @@ import type {
   CreateSessionPayload,
   JoinOrCreatePayload,
   LeaveSessionResponse,
+  AddRouletteValuePayload,
+  CreateRouletteSessionPayload,
   OwnerActionPayload,
+  RouletteOwnerActionPayload,
+  RouletteSessionOwnerResponse,
+  RouletteSessionView,
   SessionParticipantResponse,
   SessionView,
   VotePayload
@@ -132,6 +137,73 @@ export function leaveSession(
   payload: OwnerActionPayload
 ): Promise<LeaveSessionResponse> {
   return requestJson<LeaveSessionResponse>(`/sessions/${code}/leave`, {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  });
+}
+
+export function createRouletteSession(
+  payload: CreateRouletteSessionPayload
+): Promise<RouletteSessionOwnerResponse> {
+  return requestJson<RouletteSessionOwnerResponse>('/roulette-sessions', {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  });
+}
+
+export function getRouletteSession(code: string): Promise<RouletteSessionView> {
+  return requestJson<RouletteSessionView>(`/roulette-sessions/${code}`);
+}
+
+export function addRouletteValue(
+  code: string,
+  payload: AddRouletteValuePayload
+): Promise<RouletteSessionView> {
+  return requestJson<RouletteSessionView>(`/roulette-sessions/${code}/values`, {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  });
+}
+
+export function removeRouletteValue(
+  code: string,
+  value: string,
+  payload: RouletteOwnerActionPayload
+): Promise<RouletteSessionView> {
+  return requestJson<RouletteSessionView>(
+    `/roulette-sessions/${code}/values/${encodeURIComponent(value)}`,
+    {
+      method: 'DELETE',
+      body: JSON.stringify(payload)
+    }
+  );
+}
+
+export function drawRouletteValue(
+  code: string,
+  payload: RouletteOwnerActionPayload
+): Promise<RouletteSessionView> {
+  return requestJson<RouletteSessionView>(`/roulette-sessions/${code}/draw`, {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  });
+}
+
+export function removeLastRouletteDraw(
+  code: string,
+  payload: RouletteOwnerActionPayload
+): Promise<RouletteSessionView> {
+  return requestJson<RouletteSessionView>(`/roulette-sessions/${code}/draw/remove`, {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  });
+}
+
+export function keepLastRouletteDraw(
+  code: string,
+  payload: RouletteOwnerActionPayload
+): Promise<RouletteSessionView> {
+  return requestJson<RouletteSessionView>(`/roulette-sessions/${code}/draw/keep`, {
     method: 'POST',
     body: JSON.stringify(payload)
   });

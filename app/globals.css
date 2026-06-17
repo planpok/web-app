@@ -213,6 +213,15 @@ textarea {
   color: var(--text);
 }
 
+.group-input-row input {
+  width: 100%;
+  border: 1px solid rgba(54, 49, 40, 0.15);
+  border-radius: 18px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--text);
+}
+
 .field-select {
   width: 100%;
   border: 1px solid rgba(54, 49, 40, 0.15);
@@ -431,6 +440,67 @@ textarea {
 .session-revealed-layout {
   display: grid;
   gap: 18px;
+}
+
+.roulette-landing {
+  min-height: calc(100vh - 80px);
+}
+
+.roulette-session-layout,
+.roulette-result-panel {
+  display: grid;
+  gap: 18px;
+}
+
+.roulette-result-value {
+  display: grid;
+  place-items: center;
+  min-height: 220px;
+  border-radius: 24px;
+  border: 1px solid rgba(217, 93, 57, 0.16);
+  background: linear-gradient(180deg, rgba(217, 93, 57, 0.12), rgba(255, 255, 255, 0.74));
+}
+
+.roulette-result-value span {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  color: var(--accent-strong);
+  font-family: Arial, sans-serif;
+  font-size: clamp(2.4rem, 8vw, 6rem);
+  font-weight: 800;
+  line-height: 0.95;
+  text-align: center;
+}
+
+.roulette-action-row {
+  justify-content: center;
+}
+
+.roulette-support-grid {
+  align-items: start;
+}
+
+.roulette-values-list {
+  display: grid;
+  gap: 10px;
+}
+
+.roulette-value-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid rgba(54, 49, 40, 0.1);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.roulette-value-row span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-family: Arial, sans-serif;
+  font-weight: 700;
 }
 
 .vote-hero,

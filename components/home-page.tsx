@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { createSession, getSession, joinSession } from '@/lib/api';
@@ -180,6 +181,11 @@ export function HomePage({ initialCode = '' }: HomePageProps) {
             Lancez une session en quelques secondes, partagez le code et laissez
             chaque participant voter sans influence jusqu&apos;à la révélation.
           </p>
+          <div className="action-row">
+            <Link className="secondary-button" href="/roulette">
+              Roulette du hasard
+            </Link>
+          </div>
         </div>
 
         <div className="hero-panels">

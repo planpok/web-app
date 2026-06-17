@@ -54,3 +54,34 @@ export type VotePayload = {
 export type OwnerActionPayload = {
   participantId: string;
 };
+
+export type RouletteLastDrawView = {
+  value: string;
+  drawnAt: string;
+  removable: boolean;
+};
+
+export type RouletteSessionView = {
+  code: string;
+  values: string[];
+  lastDraw: RouletteLastDrawView | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type RouletteSessionOwnerResponse = {
+  ownerToken: string;
+  session: RouletteSessionView;
+};
+
+export type CreateRouletteSessionPayload = {
+  values?: string[];
+};
+
+export type RouletteOwnerActionPayload = {
+  ownerToken: string;
+};
+
+export type AddRouletteValuePayload = RouletteOwnerActionPayload & {
+  value: string;
+};
