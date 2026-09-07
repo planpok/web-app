@@ -454,6 +454,7 @@ textarea {
 
 .roulette-result-value {
   display: grid;
+  gap: 12px;
   place-items: center;
   min-height: 220px;
   border-radius: 24px;
@@ -474,6 +475,18 @@ textarea {
 
 .roulette-action-row {
   justify-content: center;
+}
+
+.roulette-draw-count {
+  display: grid;
+  gap: 4px;
+  color: var(--ink-muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.roulette-draw-count select {
+  min-width: 76px;
 }
 
 .roulette-support-grid {

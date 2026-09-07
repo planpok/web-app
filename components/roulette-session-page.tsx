@@ -23,6 +23,7 @@ export function RouletteSessionPage({ code }: RouletteSessionPageProps) {
   const [ownerToken, setOwnerToken] = useState<string | null>(null);
   const [session, setSession] = useState<RouletteSessionView | null>(null);
   const [valueInput, setValueInput] = useState('');
+  const [drawCount, setDrawCount] = useState(1);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [pendingAction, setPendingAction] = useState<string | null>(null);
 
@@ -44,6 +45,12 @@ export function RouletteSessionPage({ code }: RouletteSessionPageProps) {
   useEffect(() => {
     setOwnerToken(getRouletteOwnerToken(sessionCode));
   }, [sessionCode]);
+
+  useEffect(() => {
+    if (session && drawCount > session.values.length) {
+      setDrawCount(Math.max(session.values.length, 1));
+    }
+  }, [drawCount, session]);
 
   useEffect(() => {
     let disposed = false;
@@ -153,23 +160,56 @@ export function RouletteSessionPage({ code }: RouletteSessionPageProps) {
           </div>
 
           <div className="roulette-result-value">
-            <span>{session?.lastDraw?.value ?? '-'}</span>
+            {session?.lastDraw ? (
+              (session.lastDraw.values ?? [session.lastDraw.value]).map((value) => (
+                <span key={value}>{value}</span>
+              ))
+            ) : (
+              <span>-</span>
+            )}
           </div>
 
           {isOwner ? (
             <div className="action-row roulette-action-row">
+              <label className="roulette-draw-count">
+                <span>Elements a tirer</span>
+                <select
+                  aria-label="Elements a tirer"
+                  disabled={!session || session.values.length === 0 || pendingAction === 'draw'}
+                  onChange={(event) => setDrawCount(Number(event.target.value))}
+                  value={drawCount}
+                >
+                  {Array.from({ length: session?.values.length ?? 0 }, (_, index) => index + 1).map(
+                    (count) => (
+                      <option key={count} value={count}>
+                        {count}
+                      </option>
+                    )
+                  )}
+                </select>
+              </label>
               <button
                 className="primary-button"
-                disabled={!session || session.values.length === 0 || pendingAction === 'draw'}
+                disabled={
+                  !session ||
+                  session.values.length === 0 ||
+                  drawCount > session.values.length ||
+                  pendingAction === 'draw'
+                }
                 onClick={() =>
                   runOwnerAction('draw', async (token) => {
-                    const updated = await drawRouletteValue(sessionCode, { ownerToken: token });
+                    const updated = await drawRouletteValue(sessionCode, {
+                      ownerToken: token,
+                      ...(drawCount > 1 ? { count: drawCount } : {})
+                    });
                     setSession(updated);
                   })
                 }
                 type="button"
               >
-                {pendingAction === 'draw' ? 'Tirage...' : 'Lancer la roulette'}
+                {pendingAction === 'draw'
+                  ? 'Tirage...'
+                  : `Tirer ${drawCount} ${drawCount > 1 ? 'elements' : 'element'}`}
               </button>
 
               <button
@@ -268,8 +308,10 @@ export function RouletteSessionPage({ code }: RouletteSessionPageProps) {
                 <span className="session-stat-label">Valeurs</span>
               </div>
               <div className="session-stat accent">
-                <span className="session-stat-value">{session?.lastDraw ? '1' : '0'}</span>
-                <span className="session-stat-label">Tirage actif</span>
+                <span className="session-stat-value">
+                  {session?.lastDraw ? (session.lastDraw.values?.length ?? 1) : 0}
+                </span>
+                <span className="session-stat-label">Elements tires</span>
               </div>
             </div>
           </aside>

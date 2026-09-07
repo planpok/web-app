@@ -1,10 +1,11 @@
 import { getApiBaseUrl } from '@/lib/config';
 import type {
+  AddRouletteValuePayload,
   CreateSessionPayload,
+  CreateRouletteSessionPayload,
+  DrawRouletteValuesPayload,
   JoinOrCreatePayload,
   LeaveSessionResponse,
-  AddRouletteValuePayload,
-  CreateRouletteSessionPayload,
   OwnerActionPayload,
   RouletteOwnerActionPayload,
   RouletteSessionOwnerResponse,
@@ -181,7 +182,7 @@ export function removeRouletteValue(
 
 export function drawRouletteValue(
   code: string,
-  payload: RouletteOwnerActionPayload
+  payload: DrawRouletteValuesPayload
 ): Promise<RouletteSessionView> {
   return requestJson<RouletteSessionView>(`/roulette-sessions/${code}/draw`, {
     method: 'POST',

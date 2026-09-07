@@ -89,7 +89,10 @@ describe('RouletteSessionPage flow', () => {
     return button as HTMLButtonElement;
   }
 
-  async function setInputValue(element: HTMLInputElement, value: string): Promise<void> {
+  async function setInputValue(
+    element: HTMLInputElement | HTMLSelectElement,
+    value: string
+  ): Promise<void> {
     await act(async () => {
       const prototype = Object.getPrototypeOf(element);
       const descriptor = Object.getOwnPropertyDescriptor(prototype, 'value');
@@ -139,12 +142,67 @@ describe('RouletteSessionPage flow', () => {
     });
 
     await act(async () => {
-      getButton('Lancer la roulette').click();
+      getButton('Tirer 1 element').click();
     });
 
     expect(drawRouletteValueMock).toHaveBeenCalledWith('ABC123', {
       ownerToken: 'roulette_owner_123'
     });
+  });
+
+  it('lets the owner choose how many values to draw', async () => {
+    const drawnSession = buildSession({
+      values: ['Alice', 'Bob', 'Charlie', 'Dana', 'Eve'],
+      lastDraw: {
+        value: 'Alice',
+        drawnAt: new Date().toISOString(),
+        removable: true
+      }
+    });
+
+    getRouletteOwnerTokenMock.mockReturnValue('roulette_owner_123');
+    getRouletteSessionMock.mockResolvedValue(drawnSession);
+    drawRouletteValueMock.mockResolvedValue(drawnSession);
+
+    await renderRouletteSessionPage();
+
+    const drawCount = container.querySelector(
+      'select[aria-label="Elements a tirer"]'
+    ) as HTMLSelectElement;
+    await setInputValue(drawCount, '5');
+
+    await act(async () => {
+      getButton('Tirer 5 elements').click();
+    });
+
+    expect(drawRouletteValueMock).toHaveBeenCalledWith('ABC123', {
+      ownerToken: 'roulette_owner_123',
+      count: 5
+    });
+  });
+
+  it('displays every value from a multiple draw', async () => {
+    getRouletteOwnerTokenMock.mockReturnValue(null);
+    getRouletteSessionMock.mockResolvedValue(
+      buildSession({
+        lastDraw: {
+          value: 'Alice',
+          values: ['Alice', 'Bob', 'Charlie'],
+          drawnAt: new Date().toISOString(),
+          removable: true
+        }
+      })
+    );
+
+    await renderRouletteSessionPage();
+
+    const drawnValues = Array.from(container.querySelectorAll('.roulette-result-value span')).map(
+      (element) => element.textContent
+    );
+
+    expect(drawnValues).toEqual(['Alice', 'Bob', 'Charlie']);
+    expect(container.textContent).toContain('3');
+    expect(container.textContent).toContain('Elements tires');
   });
 
   it('lets the owner remove or keep a removable draw', async () => {

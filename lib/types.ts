@@ -57,6 +57,7 @@ export type OwnerActionPayload = {
 
 export type RouletteLastDrawView = {
   value: string;
+  values?: string[];
   drawnAt: string;
   removable: boolean;
 };
@@ -80,6 +81,10 @@ export type CreateRouletteSessionPayload = {
 
 export type RouletteOwnerActionPayload = {
   ownerToken: string;
+};
+
+export type DrawRouletteValuesPayload = RouletteOwnerActionPayload & {
+  count?: number;
 };
 
 export type AddRouletteValuePayload = RouletteOwnerActionPayload & {
