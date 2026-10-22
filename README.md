@@ -4,7 +4,7 @@ Next.js frontend application for Poker Planning.
 
 ## Prerequisites
 
-- Recommended Node.js 22.x
+- Node.js 24.22.1 LTS (use `nvm use`; aligned with CI and Docker)
 - npm 10+
 - Reachable Poker Planning backend (HTTP API + Socket.IO)
 
