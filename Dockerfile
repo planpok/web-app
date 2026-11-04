@@ -1,10 +1,10 @@
-FROM node:24.22.1-trixie-slim AS deps
+FROM node:24.22.2-trixie-slim AS deps
 WORKDIR /app
 
 COPY package*.json ./
 RUN npm ci
 
-FROM node:24.22.1-trixie-slim AS build
+FROM node:24.22.2-trixie-slim AS build
 WORKDIR /app
 ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:3000/api
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
@@ -14,7 +14,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run build
 
-FROM gcr.io/distroless/nodejs24-debian13:nonroot AS runtime
+FROM gcr.io/distroless/nodejs24-debian13:nonroot@sha256:b8cec4b2f2126ff7bd034ec9ac207ffb3272667dfdc48376e3b035d3270549ba AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
